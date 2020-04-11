@@ -34,6 +34,17 @@ log = logging.getLogger(__name__)
 
 utc = pendulum.timezone('UTC')
 
+from airflow import configuration as conf
+try:
+    tz = conf.get("core", "default_timezone")
+    if tz == "system":
+        utc = pendulum.local_timezone()
+    else:
+        utc = pendulum.timezone(tz)
+except Exception:
+    pass
+
+
 using_mysql = conf.get('core', 'sql_alchemy_conn').lower().startswith('mysql')
 
 
